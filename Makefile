@@ -14,6 +14,12 @@ all: $(BIN)/$(EXE)
 run: all
 	$(BIN)/$(EXE) $(ARGS)
 
+mem: run
+	valgrind --leak-check=full --show-leak-kinds=all $(BIN)/$(EXE)
+
+debug: run
+	gdb '$(BIN)/$(EXE) $(ARGS)'
+
 $(BIN)/$(EXE): $(OBJ)/main.o
 	$(CC) $(OBJ)/main.o -o $(BIN)/$(EXE)
 

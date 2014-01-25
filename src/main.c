@@ -19,6 +19,7 @@ void show_help(char *progname) {
   printf("  -i file, --input file     File to putrefy.\n");
   printf("  -o file, --output file    Output putrefied file to DIR.\n");
   printf("  -r rate, --rate rate      The rate of putrefaction, between 0 and 1 inclusive.\n");
+  printf("  -v, --verbose             Verbose output.\n");
   printf("  -h, --help                Show this message.\n");
 }
 
@@ -26,6 +27,7 @@ int main(int argc, char **argv) {
   char *inpath = NULL;
   char *outpath = NULL;
   double rate = -1.0;
+  bool verbose = false;
 
   int i;
   for (i = 1; i < argc; i++) {
@@ -70,6 +72,11 @@ int main(int argc, char **argv) {
 	printf("Putrefaction rate must be between 0 and 1 inclusive.\n");
 	return EXIT_FAILURE;
       }
+    }
+
+    if (strncmp(argv[i], OPT_VERBOSE, strlen(OPT_VERBOSE)) == 0
+	|| strncmp(argv[i], OPT_VERBOSE_LONG, strlen(OPT_VERBOSE_LONG)) == 0) {
+      verbose = true;
     }
   }
 

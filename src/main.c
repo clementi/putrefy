@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     if (strncmp(argv[i], OPT_OUTPUT, strlen(OPT_OUTPUT)) == 0
 	|| strncmp(argv[i], OPT_OUTPUT_LONG, strlen(OPT_OUTPUT_LONG)) == 0) {
 
-      if (i + 1== argc) {
+      if (i + 1 == argc) {
 	printf("No output file provided.\n");
 	return EXIT_FAILURE;
       }

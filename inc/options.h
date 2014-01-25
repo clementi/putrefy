@@ -7,8 +7,6 @@
 #define OPT_INPUT_LONG "--input"
 #define OPT_OUTPUT "-o"
 #define OPT_OUTPUT_LONG "--output"
-#define OPT_DEST "-d"
-#define OPT_DEST_LONG "--dest"
 #define OPT_HELP "-h"
 #define OPT_HELP_LONG "--help"
 

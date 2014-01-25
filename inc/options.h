@@ -9,6 +9,8 @@
 #define OPT_OUTPUT_LONG "--output"
 #define OPT_HELP "-h"
 #define OPT_HELP_LONG "--help"
+#define OPT_RATE "-r"
+#define OPT_RATE_LONG "--rate"
 
 typedef struct options_t {
   bool show_help;

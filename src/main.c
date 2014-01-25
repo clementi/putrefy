@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <unistd.h>
+
 #include "options.h"
 
 // Prototypes
@@ -16,12 +18,14 @@ void show_help(char *progname) {
   printf("Options:\n");
   printf("  -i file, --input file     File to putrefy.\n");
   printf("  -o file, --output file    Output putrefied file to DIR.\n");
+  printf("  -r rate, --rate rate      The rate of putrefaction, between 0 and 1 inclusive.\n");
   printf("  -h, --help                Show this message.\n");
 }
 
 int main(int argc, char **argv) {
   char *inpath = NULL;
   char *outpath = NULL;
+  double rate = -1.0;
 
   int i;
   for (i = 1; i < argc; i++) {
@@ -52,6 +56,21 @@ int main(int argc, char **argv) {
 
       outpath = argv[++i];
     }
+
+    if (strncmp(argv[i], OPT_RATE, strlen(OPT_RATE)) == 0
+	|| strncmp(argv[i], OPT_RATE_LONG, strlen(OPT_RATE_LONG)) == 0) {
+      
+      if (i + 1 == argc) {
+	printf("No putrefaction rate provided.\n");
+	return EXIT_FAILURE;
+      }
+
+      rate = atof(argv[++i]);
+      if (rate < 0.0) {
+	printf("Putrefaction rate must be between 0 and 1 inclusive.\n");
+	return EXIT_FAILURE;
+      }
+    }
   }
 
   if (inpath == NULL) {
@@ -63,6 +82,27 @@ int main(int argc, char **argv) {
     printf("Output file required.\n");
     return EXIT_FAILURE;
   }
+
+  if (rate < 0.0) {
+    printf("Putrefaction rate required.\n");
+    return EXIT_FAILURE;
+  }
+  else {
+    printf("Putrefaction rate = %g\n", rate);
+  }
+
+  if (access(inpath, R_OK) != -1) {
+    FILE *infile = fopen(inpath, "rb");
+    fseek(infile, 0L, SEEK_END);
+    long infile_length = ftell(infile);
+    printf("File %s exists and has length %ld.\n", inpath, infile_length);
+  }
+  else {
+    printf("Cannot access %s.\n", inpath);
+    return EXIT_FAILURE;
+  }
+
+
 
   return EXIT_SUCCESS;
 }

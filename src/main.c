@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <unistd.h>
 
@@ -11,16 +12,35 @@
 
 void show_help(char *progname);
 
+int compare_indices(const void *first_index, const void *second_index);
+
+bool contains(long value, long *byte_indices, long length);
+
 // Code
 
 void show_help(char *progname) {
   printf("Usage: %s [options]\n", progname);
   printf("Options:\n");
   printf("  -i file, --input file     File to putrefy.\n");
-  printf("  -o file, --output file    Output putrefied file to DIR.\n");
+  printf("  -o file, --output file    Output putrefied file to file.\n");
   printf("  -r rate, --rate rate      The rate of putrefaction, between 0 and 1 inclusive.\n");
   printf("  -v, --verbose             Verbose output.\n");
   printf("  -h, --help                Show this message.\n");
+}
+
+int compare_indices(const void *first_index, const void *second_index) {
+  return *(long *)first_index = *(long *)second_index;
+}
+
+bool contains(long value, long *byte_indices, long length) {
+  long i;
+  for (i = 0L; i < length; i++) {
+    if (byte_indices[i] == value) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 int main(int argc, char **argv) {
@@ -102,14 +122,44 @@ int main(int argc, char **argv) {
     FILE *infile = fopen(inpath, "rb");
     fseek(infile, 0L, SEEK_END);
     long infile_length = ftell(infile);
-    printf("File %s exists and has length %ld.\n", inpath, infile_length);
+    fseek(infile, 0L, SEEK_SET);
+
+    long byte_index_count = (long)(rate * infile_length);
+    if (verbose) {
+      printf("%ld bytes will be putrefied\n", byte_index_count);
+    }
+
+    long *byte_indices = (long *)malloc(sizeof(long) * byte_index_count);
+
+    long i;
+    for (i = 0L; i < byte_index_count; i++) {
+      byte_indices[i] = rand() % infile_length;
+    }
+
+    qsort(byte_indices, byte_index_count, sizeof(long), compare_indices);
+
+    srand(time(NULL));
+
+    FILE *outfile = fopen(outpath, "wb");
+
+    int byte;
+    for (i = 0L; i < infile_length; i++) {
+      if (contains(i, byte_indices, byte_index_count)) {
+	printf("Dirty byte at %ld\n", i);
+      }
+      byte = fgetc(infile);
+      fputc(byte, outfile);
+    }
+
+    free(byte_indices);
+
+    fclose(infile);
+    fclose(outfile);
   }
   else {
     printf("Cannot access %s.\n", inpath);
     return EXIT_FAILURE;
   }
-
-
 
   return EXIT_SUCCESS;
 }

@@ -1,6 +1,6 @@
-CC=clang
+CC=gcc
 
-CFLAGS=-c -Weverything
+CFLAGS=-c -Wall
 
 EXE=putrefy
 
